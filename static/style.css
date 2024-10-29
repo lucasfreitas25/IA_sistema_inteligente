@@ -1,4 +1,4 @@
-/* Reset de estilo básico */
+
 * {
     color: #2f5d8a;
     margin: 0;
@@ -19,28 +19,64 @@ body {
 
 .titulo {
     background-color: #ffffff;
-    padding: 10%;
+    padding: 20px;
+    padding-top: 10px; /* Reduzindo o padding superior */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 100%;
     max-width: 500px;
-    /* Adicionando margens para um layout visualmente mais agradável */
     margin: auto;
+    align-items: flex-start;
 }
 
 h1 {
     color: #4A90E2;
-    margin: 0;
-    white-space: nowrap;  
     font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    white-space: nowrap;
 }
 
-.message {
-    background-color: #e7f3ff;
-    color: #2f5d8a;
-    padding: 15px;
-    border: 1px solid #b3d4fc;
+.date-range {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.date-range label {
+    font-size: 1em;
+    color: #333;
+    margin-right: 5px;
+}
+
+.date-range input[type="date"] {
+    padding: 5px;
+    font-size: 1em;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 1.1em;
+}
+
+button[type="submit"] {
+    background-color: #4A90E2;
+    color: #ffffff;
+    margin-top: 5px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #357ABD;
+}
+
+.logo {
+    width: 150px; /* Ajuste conforme necessário */
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

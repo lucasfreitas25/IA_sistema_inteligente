@@ -8,11 +8,16 @@
 </head>
 <body>
     <div class="titulo">
+        <img src="{{ url_for('static', filename='images/logo_freitulitos.png') }}" alt="Logo" class="logo"> 
         <h1>Previsão de Vendas da Próxima Semana</h1>
             <div class="mensage">
                 <form method="POST">
-                    <label for="historico">Histórico de Vendas (JSON ou outros dados relevantes):</label><br>
-                    <input type="text" id="historico" name="historico" required><br><br>
+                    <label for="start-date">Data Início:</label>
+                    <input type="date" id="start-date" name="start-date">
+                    
+                    <label for="end-date">Data Final:</label>
+                    <input type="date" id="end-date" name="end-date">
+                
                     <button type="submit">Prever Vendas</button>
                 </form>
             </div>
