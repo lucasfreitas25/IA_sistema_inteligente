@@ -23,7 +23,12 @@
             </div>
         </div>    
     {% if prediction %}
-        <h2>Previsão para a Próxima Semana: {{ prediction }}</h2>
+        <h2>Previsão de Vendas:</h2>
+        <ul>
+            {% for sale in prediction %}
+                <li>{{ sale }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
 </body>
 </html>
