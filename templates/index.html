@@ -20,15 +20,16 @@
                 
                     <button type="submit">Prever Vendas</button>
                 </form>
+                <div class="previ"> 
+                {% if prediction %}
+                    <h2>Previsão de Vendas:</h2>
+                    <ul>
+                        <li>{{ prediction }}</li>
+                    </ul>
+                {% endif %}
+                </div>
             </div>
         </div>    
-    {% if prediction %}
-        <h2>Previsão de Vendas:</h2>
-        <ul>
-            {% for sale in prediction %}
-                <li>{{ sale }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+
 </body>
 </html>
