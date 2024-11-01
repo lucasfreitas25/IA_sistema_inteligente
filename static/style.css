@@ -85,6 +85,14 @@ button[type="submit"]:hover {
 }
 
 
+#produtos_gratis {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#Lancamento_prod {
+    margin-top: 5px;
+}
 .previ {
 
     padding: 25px;
