@@ -1,5 +1,8 @@
+import base64
+import io
 import sqlite3
 from flask import Flask, render_template, request
+from matplotlib import pyplot as plt
 import pandas as pd
 from tensorflow.keras.models import load_model
 from datetime import datetime
@@ -7,8 +10,9 @@ import numpy as np
 import holidays
 from sklearn.preprocessing import MinMaxScaler
 import joblib
-feriados_brasil = holidays.Brazil()
 
+
+feriados_brasil = holidays.Brazil()
 app = Flask(__name__)
 
 
@@ -25,8 +29,7 @@ def determinar_estacao(data):
 def fim_do_mes(data):
 
     return data.is_month_end.astype(int)
-        
-    
+          
 def create_table():
     conn = sqlite3.connect('sales_data.db')
     cursor = conn.cursor()
@@ -45,31 +48,35 @@ def create_table():
 
 create_table()
 model = load_model("model\\modelo_sist_inteligente.h5")
-scaler_y = joblib.load('model\\scaler_y.h2')
+total_vendido = np.array([100, 200, 300, 400, 500, 600])  
+
+scaler_y = MinMaxScaler()
+scaler_y.fit(total_vendido.reshape(-1, 1))
+historical_predictions = []
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None 
-
+    global historical_predictions
+    start_date = ""
+    end_date = ""
+    plot_url = ""
     if request.method == "POST":
+        #PASSANDO A ENTRADA DOS DADOS 
         start_date = request.form.get("start-date")
         end_date = request.form.get("end-date")
         prod_gratis = int(request.form.get("prod_gratis"))  
         combos = int(request.form.get("combo"))  
         lancamento_prod = 1 if request.form.get("Lancamento_prod") else 0  
-
         start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
         end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
-        
         date_range = pd.date_range(start=start_date_obj, end=end_date_obj)
-
-      
         feriados = [d in feriados_brasil for d in date_range]
         Dia_da_Semana = date_range.weekday
         Dia_util = np.where(Dia_da_Semana.isin([5, 6]), 0, 1)
         estacao = [determinar_estacao(d) for d in date_range]
         
-    
+
         sales_data = pd.DataFrame({
             "date": date_range,
             "fim_do_mes": fim_do_mes(date_range),
@@ -83,9 +90,8 @@ def index():
             "dias": (date_range - date_range.min()).days  
         })
         
-        print(sales_data)  
+        # print(sales_data)  
         
-        # Normalizar os dados - ajuste o scaler conforme necessário
         scaler_X = MinMaxScaler()
         features = sales_data[['fim_do_mes', 'prod_gratis', 'Lancamento_prod', 'Combo_promo', 'feriado', 'Dia_da_Semana', 'Dia_util', 'estacao', 'dias']]
         features_scaled = scaler_X.fit_transform(features)
@@ -96,12 +102,24 @@ def index():
 
         # PREVISÃO UTILIZANDO O MODELO
         predicted_sales = model.predict(input_data)
-        print(predicted_sales)
-
         predicted_sales = scaler_y.inverse_transform(predicted_sales)  
-        prediction = int(predicted_sales.flatten() *1000)
-        prediction = predicted_sales.flatten() 
+        prediction = int(predicted_sales.flatten()[0])
+        
+        historical_predictions.append(prediction)
+        plt.figure(figsize=(10, 6))
+        plt.plot(historical_predictions, marker='o', color='b', label='Previsão de Vendas')
+        plt.xlabel("Número da Previsão")
+        plt.ylabel("Vendas")
+        plt.title("Histórico de Previsões de Vendas")
+        plt.legend()
 
-    return render_template("index.html", prediction=prediction)
+        # Salvar o gráfico em um buffer
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)
+        plot_url = base64.b64encode(img.getvalue()).decode()
+
+    return render_template("index.html", prediction=prediction, data_inicio = start_date, data_final = end_date, plot_url=plot_url)
+
 if __name__ == "__main__":
     app.run(debug=True)

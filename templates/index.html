@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Previsão de Vendas</title>
     <link rel="stylesheet" href="static//style.css">
+    <script>
+        function toggleGraph() {
+            var graph = document.getElementById("graph");
+            if (graph.style.display === "none") {
+                graph.style.display = "block";
+            } else {
+                graph.style.display = "none";
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="titulo">
@@ -38,9 +48,16 @@
                 <div class="previ"> 
                 {% if prediction %}
                     <h2>Previsão de Vendas:</h2>
+                    <label>SEMANA: {{ data_inicio }} Até {{ data_final }}</label>
                     <ul>
                         <li>{{ prediction }}</li>
                     </ul>
+                    <button id="graficoButton" onclick="toggleGraph()">Mostrar/Ocultar Gráfico</button>
+        
+                    <div id="graph" class="graph-container" style="display:none;">
+                        <h3>Gráfico de Previsões de Vendas</h3>
+                        <img id="Imagem_previsao" src="data:image/png;base64,{{ plot_url }}" alt="Gráfico de Previsões" class="centralized-graph">
+                    </div>
                 {% endif %}
                 </div>
             </div>
