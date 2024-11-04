@@ -9,7 +9,6 @@ from datetime import datetime
 import numpy as np
 import holidays
 from sklearn.preprocessing import MinMaxScaler
-import joblib
 
 
 feriados_brasil = holidays.Brazil()
@@ -46,6 +45,7 @@ def create_table():
     conn.close()  
 
 
+
 create_table()
 model = load_model("model\\modelo_sist_inteligente.h5")
 total_vendido = np.array([100, 200, 300, 400, 500, 600])  
@@ -53,15 +53,18 @@ total_vendido = np.array([100, 200, 300, 400, 500, 600])
 scaler_y = MinMaxScaler()
 scaler_y.fit(total_vendido.reshape(-1, 1))
 historical_predictions = []
+dias = []
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None 
     global historical_predictions
+    global dias
     start_date = ""
     end_date = ""
     plot_url = ""
     if request.method == "POST":
+        
         #PASSANDO A ENTRADA DOS DADOS 
         start_date = request.form.get("start-date")
         end_date = request.form.get("end-date")
@@ -105,19 +108,27 @@ def index():
         predicted_sales = scaler_y.inverse_transform(predicted_sales)  
         prediction = int(predicted_sales.flatten()[0])
         
+        
+    
+        start_day = f'{start_date_obj.day}/{start_date_obj.month}'
+        end_day = f'{end_date_obj.day}/{end_date_obj.month}'
+
+        semana_prev = f"{start_day} - {end_day}"
+        dias.append(semana_prev)
         historical_predictions.append(prediction)
         plt.figure(figsize=(10, 6))
-        plt.plot(historical_predictions, marker='o', color='b', label='Previsão de Vendas')
-        plt.xlabel("Número da Previsão")
+        plt.plot(dias, historical_predictions, marker='o', color='b', label='Previsão de Vendas')
+        plt.xlabel("Semana prevista")
         plt.ylabel("Vendas")
         plt.title("Histórico de Previsões de Vendas")
         plt.legend()
 
-        # Salvar o gráfico em um buffer
+
         img = io.BytesIO()
         plt.savefig(img, format='png')
         img.seek(0)
         plot_url = base64.b64encode(img.getvalue()).decode()
+        
 
     return render_template("index.html", prediction=prediction, data_inicio = start_date, data_final = end_date, plot_url=plot_url)
 

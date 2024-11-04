@@ -112,7 +112,7 @@ h2 {
     margin-bottom: 10px;
 }
 
-#graficoButton{
+Button{
     background-color: #4A90E2;
     color: #ffffff;
     margin-top: 5px;
@@ -123,6 +123,9 @@ h2 {
     cursor: pointer;
 }
 
+i{
+    color: #ffffff;
+}
 #graficoButton:hover {
     background-color: #357ABD;
 }
