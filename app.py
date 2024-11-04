@@ -47,7 +47,7 @@ def create_table():
 
 
 create_table()
-model = load_model("model\\modelo_sist_inteligente.h5")
+model = load_model("model\\modelo_sist_inteligente_att.h5")
 total_vendido = np.array([100, 200, 300, 400, 500, 600])  
 
 scaler_y = MinMaxScaler()
